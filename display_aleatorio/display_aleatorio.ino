@@ -16,7 +16,8 @@ const long intervalo = 300;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(pinButton, INPUT); 
+  pinMode(pinButton, INPUT);
+  randomSeed(analogRead(A5));
   
   
   for (int x = 2; x <= 8; x++) {
@@ -40,7 +41,7 @@ void loop() {
     unsigned long tempoAtual = millis();
     if (tempoAtual - tempoAnterior >= intervalo) {
       tempoAnterior = tempoAtual;
-      numeroAtual = (numeroAtual + 1) % 10; 
+      numeroAtual = random(0, 10);
     }
   }
 
