@@ -231,7 +231,7 @@ Este projeto implementa um sistema de alarme detector de corte de feixe de luz u
 
 # Display Aleatório
 
-Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para exibir números aleatórios de 0 a 9 de forma contínua, permitindo pausar e congelar o número sorteado ao pressionar um botão.
+Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para exibir números aleatórios de 0 a 9 de forma contínua, permitindo pausar e reiniciar o sorteio através de dois botões dedicados.
 
 ---
 
@@ -239,8 +239,8 @@ Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para 
 
 * 1x Placa **Arduino Uno**
 * 1x Display de 7 segmentos
-* 1x Botão (Push button)
-* Resistores para os segmentos e pull-down do botão
+* 2x Botões (Push buttons)
+* Resistores para os segmentos e pull-down dos botões
 * Cabos de conexão
 * Protoboard
 
@@ -257,7 +257,8 @@ Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para 
 | **Segmento E** | Porta 6 | Digital (Saída) |
 | **Segmento F** | Porta 7 | Digital (Saída) |
 | **Segmento G** | Porta 8 | Digital (Saída) |
-| **Botão (Pausa)** | Porta 10 | Digital (Entrada) |
+| **Botão Parar (Stop)** | Porta 10 | Digital (Entrada) |
+| **Botão Iniciar (Init)** | Porta 11 | Digital (Entrada) |
 
 ---
 
@@ -265,17 +266,20 @@ Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para 
 
 1. **`setup()`**:
    * Inicializa a comunicação Serial a 9600 bps.
-   * Configura o pino do botão (porta 10) como entrada (`INPUT`).
+   * Configura os pinos dos botões (portas 10 e 11) como entrada (`INPUT`).
    * Configura os pinos dos segmentos (portas 2 a 8) como saídas (`OUTPUT`) e inicializa-os desligados (`LOW`).
-   * Inicializa o gerador de números pseudoaleatórios com `randomSeed(analogRead(A5))`.
+   * Inicializa a semente pseudoaleatória com `randomSeed(analogRead(A5))`.
 
 2. **`loop()`**:
-   * Verifica se o botão foi acionado (`digitalRead(pinButton) == HIGH`). Se pressionado, a variável `pausado` torna-se verdadeira e a troca de números é interrompida imediatamente.
-   * Enquanto não estiver pausado, sorteia um número entre 0 e 9 a cada 100 ms usando `millis()` e aciona a função `stopContagem()`.
+   * Faz a leitura dos dois botões de controle:
+     * Ao pressionar o botão **Init** (porta 11), a variável `pausado` torna-se `false`, iniciando ou retomando a troca de números.
+     * Ao pressionar o botão **Stop** (porta 10), a variável `pausado` torna-se `true`, congelando o número atual no display.
+   * Enquanto não estiver pausado, sorteia um novo número entre 0 e 9 a cada 300 ms utilizando `millis()` e `random(0, 10)`.
+   * Chama `mostrarNumero(numeroAtual)` continuamente para manter os segmentos acesos com o valor da vez.
 
-3. **`stopContagem(int numStop)` e funções de dígitos**:
-   * Encaminha o valor recebido para a respectiva função de acionamento (`zero()` a `nove()`).
-   * Cada função define os segmentos em nível alto (`HIGH`) ou baixo (`LOW`) para desenhar o dígito correspondente no display.
+3. **`mostrarNumero(int num)` e funções de dígitos**:
+   * Utiliza uma estrutura `switch` para acionar a função correspondente ao algarismo (`zero()` a `nove()`).
+   * Cada função define os níveis lógicos (`HIGH`/`LOW`) em cada segmento para formar o desenho do dígito.
 
 ---
 
@@ -287,4 +291,4 @@ Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para 
 4. Abra o arquivo `display_aleatorio/display_aleatorio.ino`.
 5. Selecione a placa **Arduino Uno** e a porta correspondente em **Ferramentas**.
 6. Clique em **Carregar** para gravar o código na placa.
-7. O display começará a alternar números aleatórios continuamente; pressione o botão para pausar no número da vez.
+7. Pressione o botão na porta 10 para pausar no número da vez e o botão na porta 11 para reiniciar a contagem.
