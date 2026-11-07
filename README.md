@@ -227,3 +227,64 @@ Este projeto implementa um sistema de alarme detector de corte de feixe de luz u
 6. Clique em **Carregar**. Abra o Monitor Serial (9600 baud) para acompanhar os valores de luz lidos.
 
 ---
+
+
+# Display Aleatório
+
+Este projeto utiliza uma placa **Arduino Uno** e um display de 7 segmentos para exibir números aleatórios de 0 a 9 de forma contínua, permitindo pausar e congelar o número sorteado ao pressionar um botão.
+
+---
+
+## Componentes Utilizados
+
+* 1x Placa **Arduino Uno**
+* 1x Display de 7 segmentos
+* 1x Botão (Push button)
+* Resistores para os segmentos e pull-down do botão
+* Cabos de conexão
+* Protoboard
+
+---
+
+## Esquema de Conexão (Pinout)
+
+| Componente | Pino no Arduino | Tipo de Pino |
+| :--- | :--- | :--- |
+| **Segmento A** | Porta 2 | Digital (Saída) |
+| **Segmento B** | Porta 3 | Digital (Saída) |
+| **Segmento C** | Porta 4 | Digital (Saída) |
+| **Segmento D** | Porta 5 | Digital (Saída) |
+| **Segmento E** | Porta 6 | Digital (Saída) |
+| **Segmento F** | Porta 7 | Digital (Saída) |
+| **Segmento G** | Porta 8 | Digital (Saída) |
+| **Botão (Pausa)** | Porta 10 | Digital (Entrada) |
+
+---
+
+## Como o Código Funciona
+
+1. **`setup()`**:
+   * Inicializa a comunicação Serial a 9600 bps.
+   * Configura o pino do botão (porta 10) como entrada (`INPUT`).
+   * Configura os pinos dos segmentos (portas 2 a 8) como saídas (`OUTPUT`) e inicializa-os desligados (`LOW`).
+   * Inicializa o gerador de números pseudoaleatórios com `randomSeed(analogRead(A5))`.
+
+2. **`loop()`**:
+   * Verifica se o botão foi acionado (`digitalRead(pinButton) == HIGH`). Se pressionado, a variável `pausado` torna-se verdadeira e a troca de números é interrompida imediatamente.
+   * Enquanto não estiver pausado, sorteia um número entre 0 e 9 a cada 100 ms usando `millis()` e aciona a função `stopContagem()`.
+
+3. **`stopContagem(int numStop)` e funções de dígitos**:
+   * Encaminha o valor recebido para a respectiva função de acionamento (`zero()` a `nove()`).
+   * Cada função define os segmentos em nível alto (`HIGH`) ou baixo (`LOW`) para desenhar o dígito correspondente no display.
+
+---
+
+## Como Executar o Projeto
+
+1. Conecte a sua **Arduino Uno** ao computador via cabo USB.
+2. Abra a **Arduino IDE**.
+3. Monte o circuito na protoboard conforme a tabela de pinos.
+4. Abra o arquivo `display_aleatorio/display_aleatorio.ino`.
+5. Selecione a placa **Arduino Uno** e a porta correspondente em **Ferramentas**.
+6. Clique em **Carregar** para gravar o código na placa.
+7. O display começará a alternar números aleatórios continuamente; pressione o botão para pausar no número da vez.
