@@ -5,20 +5,22 @@ int pinD = 5;
 int pinE = 6;
 int pinF = 7;
 int pinG = 8;
-int pinButton = 10;
+int pinButtonStop = 10;
+int pinButtonInit = 11;
 
 int numeroAtual = 0;
 bool pausado = false;
-int ultimoEstadoBotao = LOW;
+int ultimoEstadoBotaoInit = LOW;
+int ultimoEstadoBotaoStop = LOW;
 
 unsigned long tempoAnterior = 0;
 const long intervalo = 300; 
 
 void setup() {
   Serial.begin(9600);
-  pinMode(pinButton, INPUT);
+  pinMode(pinButtonStop, INPUT);
+  pinMode(pinButtonInit, INPUT);
   randomSeed(analogRead(A5));
-  
   
   for (int x = 2; x <= 8; x++) {
     pinMode(x, OUTPUT);
@@ -27,16 +29,19 @@ void setup() {
 }
 
 void loop() {
-  int estadoBotao = digitalRead(pinButton);
-
+  int estadoBotaoInit = digitalRead(pinButtonInit);
+  int estadoBotaoStop = digitalRead(pinButtonStop);
   
-  if (estadoBotao == HIGH && ultimoEstadoBotao == LOW) {
-    pausado = !pausado; 
-    delay(50);          
+  if (estadoBotaoInit == HIGH && ultimoEstadoBotaoInit == LOW) {
+    pausado = false;     
   }
-  ultimoEstadoBotao = estadoBotao;
-
+  ultimoEstadoBotaoInit = estadoBotaoInit;
   
+  if (estadoBotaoStop == HIGH && ultimoEstadoBotaoStop == LOW) {
+    pausado = true;    
+  }
+  ultimoEstadoBotaoStop = estadoBotaoStop;
+
   if (!pausado) {
     unsigned long tempoAtual = millis();
     if (tempoAtual - tempoAnterior >= intervalo) {
@@ -45,7 +50,6 @@ void loop() {
     }
   }
 
-  
   mostrarNumero(numeroAtual);
 }
 
