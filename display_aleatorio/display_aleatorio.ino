@@ -7,57 +7,59 @@ int pinF = 7;
 int pinG = 8;
 int pinButton = 10;
 
+int numeroAtual = 0;
+bool pausado = false;
+int ultimoEstadoBotao = LOW;
+
+unsigned long tempoAnterior = 0;
+const long intervalo = 300; 
+
 void setup() {
   Serial.begin(9600);
-  pinMode(pinButton, INPUT);
-  for (int x = 0; x <= 8; x++) {
+  pinMode(pinButton, INPUT); 
+  
+  
+  for (int x = 2; x <= 8; x++) {
     pinMode(x, OUTPUT);
-  }
-  for (int x = 0; x <= 8; x++) {
     digitalWrite(x, LOW);
   }
 }
 
 void loop() {
-  int buttonState;
-  buttonState = digitalRead(pinButton);
+  int estadoBotao = digitalRead(pinButton);
+
+  
+  if (estadoBotao == HIGH && ultimoEstadoBotao == LOW) {
+    pausado = !pausado; 
+    delay(50);          
+  }
+  ultimoEstadoBotao = estadoBotao;
+
+  
+  if (!pausado) {
+    unsigned long tempoAtual = millis();
+    if (tempoAtual - tempoAnterior >= intervalo) {
+      tempoAnterior = tempoAtual;
+      numeroAtual = (numeroAtual + 1) % 10; 
+    }
+  }
+
+  
+  mostrarNumero(numeroAtual);
 }
 
-void stopContagem(numStop) {
-  if (numStop == 0) {
-    zero();
-  }
-  
-  if (numStop == 2) {
-    dois();
-  }
-
-  if (numStop == 3) {
-    tres();
-  }
-
-  if (numStop == 4) {
-    quatro();
-  }
-
-  if (numStop == 5) {
-    cinco();
-  }
-
-  if (numStop == 6) {
-    seis();
-  }
-
-  if (numStop == 7) {
-    sete();
-  }
-
-  if (numStop == 8) {
-    oito();
-  }
-
-  if (numStop == 9) {
-    nove();
+void mostrarNumero(int num) {
+  switch (num) {
+    case 0: zero(); break;
+    case 1: um(); break;
+    case 2: dois(); break;
+    case 3: tres(); break;
+    case 4: quatro(); break;
+    case 5: cinco(); break;
+    case 6: seis(); break;
+    case 7: sete(); break;
+    case 8: oito(); break;
+    case 9: nove(); break;
   }
 }
 
@@ -72,8 +74,8 @@ void zero() {
 }
 
 void um() {
-  digitalWrite(pinA, HIGH);
-  digitalWrite(pinB, LOW);
+  digitalWrite(pinA, LOW);
+  digitalWrite(pinB, HIGH);
   digitalWrite(pinC, HIGH);
   digitalWrite(pinD, LOW);
   digitalWrite(pinE, LOW);
@@ -102,8 +104,8 @@ void tres() {
 }
 
 void quatro() {
-  digitalWrite(pinA, HIGH);
-  digitalWrite(pinB, LOW);
+  digitalWrite(pinA, LOW);
+  digitalWrite(pinB, HIGH);
   digitalWrite(pinC, HIGH);
   digitalWrite(pinD, LOW);
   digitalWrite(pinE, LOW);
@@ -112,8 +114,8 @@ void quatro() {
 }
 
 void cinco() {
-  digitalWrite(pinA, LOW);
-  digitalWrite(pinB, HIGH);
+  digitalWrite(pinA, HIGH);
+  digitalWrite(pinB, LOW);
   digitalWrite(pinC, HIGH);
   digitalWrite(pinD, HIGH);
   digitalWrite(pinE, LOW);
@@ -122,8 +124,8 @@ void cinco() {
 }
 
 void seis() {
-  digitalWrite(pinA, LOW);
-  digitalWrite(pinB, HIGH);
+  digitalWrite(pinA, HIGH);
+  digitalWrite(pinB, LOW);
   digitalWrite(pinC, HIGH);
   digitalWrite(pinD, HIGH);
   digitalWrite(pinE, HIGH);
